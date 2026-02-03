@@ -92,10 +92,10 @@ utils/
 
 ```
 examples/
-├── 01_simple_backtest.py   # 简单回测示例
-├── 02_multi_strategy.py    # 多策略对比
-├── 03_optimization.py      # 参数优化
-└── 04_live_signal.py       # 实时信号监控
+├── simple_backtest.py   # 简单回测示例
+├── multi_strategy.py    # 多策略对比
+├── optimization.py      # 参数优化
+└── live_signal.py       # 实时信号监控
 ```
 
 ### 🧪 测试文件（2个）
@@ -148,16 +148,16 @@ python test_installation.py
 
 ```bash
 # 简单回测
-python examples/01_simple_backtest.py
+python examples/simple_backtest.py
 
 # 多策略对比
-python examples/02_multi_strategy.py
+python examples/multi_strategy.py
 
 # 参数优化
-python examples/03_optimization.py
+python examples/optimization.py
 
 # 实时监控
-python examples/04_live_signal.py
+python examples/live_signal.py
 ```
 
 ---
@@ -316,7 +316,7 @@ python examples/04_live_signal.py
 ### 下一步行动
 
 1. ✅ 运行 `python test_installation.py` 验证安装
-2. ✅ 运行 `python examples/01_simple_backtest.py` 体验回测
+2. ✅ 运行 `python examples/simple_backtest.py` 体验回测
 3. ✅ 阅读 `TUTORIAL_CN.md` 深入学习
 4. ✅ 开发自己的策略
 5. ✅ 分享你的经验！

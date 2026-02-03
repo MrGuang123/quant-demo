@@ -81,10 +81,10 @@ quant-demo/
 │   └── risk_manager.py      # 风险管理
 │
 ├── examples/                 # 📚 示例脚本
-│   ├── 01_simple_backtest.py      # 基础回测示例
-│   ├── 02_multi_strategy.py       # 多策略对比
-│   ├── 03_optimization.py         # 参数优化
-│   └── 04_live_signal.py          # 实时信号监控
+│   ├── simple_backtest.py      # 基础回测示例
+│   ├── multi_strategy.py       # 多策略对比
+│   ├── optimization.py         # 参数优化
+│   └── live_signal.py          # 实时信号监控
 │
 └── main.py                   # 🎯 主程序入口
 ```
@@ -126,16 +126,16 @@ pip install -r requirements.txt
 
 ```bash
 # 运行示例1：简单回测
-python examples/01_simple_backtest.py
+python examples/simple_backtest.py
 
 # 运行示例2：多策略对比
-python examples/02_multi_strategy.py
+python examples/multi_strategy.py
 
 # 运行示例3：参数优化
-python examples/03_optimization.py
+python examples/optimization.py
 
 # 运行示例4：实时信号监控
-python examples/04_live_signal.py
+python examples/live_signal.py
 ```
 
 ---

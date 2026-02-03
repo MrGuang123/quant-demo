@@ -36,10 +36,10 @@ rm -rf data/cache/
 python test_installation.py
 
 # 运行示例
-python examples/01_simple_backtest.py
-python examples/02_multi_strategy.py
-python examples/03_optimization.py
-python examples/04_live_signal.py
+python examples/simple_backtest.py
+python examples/multi_strategy.py
+python examples/optimization.py
+python examples/live_signal.py
 
 # 运行主程序
 python main.py

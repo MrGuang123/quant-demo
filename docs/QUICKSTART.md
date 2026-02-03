@@ -31,7 +31,7 @@ pip install -r requirements.txt
 
 ```bash
 # 运行简单回测示例
-python examples/01_simple_backtest.py
+python examples/simple_backtest.py
 ```
 
 你会看到类似这样的输出：
@@ -91,7 +91,7 @@ python examples/01_simple_backtest.py
 ### 示例2：多策略对比
 
 ```bash
-python examples/02_multi_strategy.py
+python examples/multi_strategy.py
 ```
 
 对比 EMA、RSI、MACD 三种策略的表现。
@@ -99,7 +99,7 @@ python examples/02_multi_strategy.py
 ### 示例3：参数优化
 
 ```bash
-python examples/03_optimization.py
+python examples/optimization.py
 ```
 
 自动寻找最优的策略参数。
@@ -107,7 +107,7 @@ python examples/03_optimization.py
 ### 示例4：实时信号监控
 
 ```bash
-python examples/04_live_signal.py
+python examples/live_signal.py
 ```
 
 实时监控交易信号（按 Ctrl+C 停止）。

@@ -42,7 +42,7 @@ python test_installation.py
 
 ```bash
 # 运行示例1：简单回测
-python examples/01_simple_backtest.py
+python examples/simple_backtest.py
 ```
 
 你会看到回测结果和图表！🎉
@@ -55,13 +55,13 @@ python examples/01_simple_backtest.py
 
 ```bash
 # 示例2：多策略对比
-python examples/02_multi_strategy.py
+python examples/multi_strategy.py
 
 # 示例3：参数优化
-python examples/03_optimization.py
+python examples/optimization.py
 
 # 示例4：实时信号监控
-python examples/04_live_signal.py
+python examples/live_signal.py
 ```
 
 ### 选项B：阅读文档
@@ -200,10 +200,10 @@ quant-demo/
 │
 └── 📚 示例脚本
     └── examples/
-        ├── 01_simple_backtest.py  # 基础回测
-        ├── 02_multi_strategy.py   # 多策略对比
-        ├── 03_optimization.py     # 参数优化
-        └── 04_live_signal.py      # 实时监控
+        ├── simple_backtest.py  # 基础回测
+        ├── multi_strategy.py   # 多策略对比
+        ├── optimization.py     # 参数优化
+        └── live_signal.py      # 实时监控
 ```
 
 ---
@@ -237,7 +237,7 @@ quant-demo/
 现在运行你的第一个回测：
 
 ```bash
-python examples/01_simple_backtest.py
+python examples/simple_backtest.py
 ```
 
 **祝你交易顺利！📈💰**

@@ -182,7 +182,7 @@ def main():
     if passed == total:
         print("\n🎉 所有测试通过！系统已就绪！")
         print("\n下一步:")
-        print("  1. 运行示例: python examples/01_simple_backtest.py")
+        print("  1. 运行示例: python examples/simple_backtest.py")
         print("  2. 阅读文档: 查看 README.md")
         print("  3. 快速开始: 查看 QUICKSTART.md")
     else:

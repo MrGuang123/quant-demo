@@ -700,7 +700,7 @@ print(f"止盈价: ${rm.calculate_take_profit(entry_price):.2f}")
 
 ### Q5: 如何监控实时信号？
 
-参考 `examples/04_live_signal.py`：
+参考 `examples/live_signal.py`：
 
 ```python
 import time
