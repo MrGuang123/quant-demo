@@ -34,37 +34,70 @@ class PerformanceMetrics:
         
         # 基本指标
         metrics['initial_capital'] = self.portfolio.init_cash
-        metrics['final_value'] = self.portfolio.final_value
-        metrics['total_return'] = self.portfolio.total_return
+        metrics['final_value'] = self.portfolio.final_value()
+        metrics['total_return'] = self.portfolio.total_return()
         metrics['annual_return'] = self.calculate_annual_return()
         
         # 风险指标
-        metrics['max_drawdown'] = abs(self.portfolio.max_drawdown)
-        metrics['sharpe_ratio'] = self.portfolio.sharpe_ratio
+        metrics['max_drawdown'] = abs(self.portfolio.max_drawdown())
+        metrics['sharpe_ratio'] = self.portfolio.sharpe_ratio()
         metrics['sortino_ratio'] = self.calculate_sortino_ratio()
         metrics['volatility'] = self.calculate_volatility()
         metrics['calmar_ratio'] = self.calculate_calmar_ratio()
         
-        # 交易统计
-        trades = self.portfolio.trades.records_readable
+        # 交易统计（只统计已平仓的交易）
+        try:
+            # vectorbt 默认返回所有交易（包括未平仓），我们只要已平仓的
+            all_trades = self.portfolio.trades.records_readable
+            # 筛选已平仓的交易（Status 为 'Closed' 或 Exit Timestamp 不为空）
+            if 'Status' in all_trades.columns:
+                trades = all_trades[all_trades['Status'] == 'Closed']
+            elif 'Exit Timestamp' in all_trades.columns:
+                trades = all_trades[all_trades['Exit Timestamp'].notna()]
+            else:
+                trades = all_trades
+        except Exception:
+            trades = self.portfolio.trades.records_readable
+        
         metrics['total_trades'] = len(trades) if len(trades) > 0 else 0
         
         if len(trades) > 0:
-            metrics['winning_trades'] = len(trades[trades['PnL'] > 0])
-            metrics['losing_trades'] = len(trades[trades['PnL'] <= 0])
-            metrics['win_rate'] = metrics['winning_trades'] / metrics['total_trades'] if metrics['total_trades'] > 0 else 0
+            try:
+                # 根据 vectorbt 文档，PnL 和 Return 是标准列名
+                metrics['winning_trades'] = len(trades[trades['PnL'] > 0])
+                metrics['losing_trades'] = len(trades[trades['PnL'] <= 0])
+                metrics['win_rate'] = metrics['winning_trades'] / metrics['total_trades'] if metrics['total_trades'] > 0 else 0
+                
+                winning_pnl = trades[trades['PnL'] > 0]['Return'].values
+                losing_pnl = trades[trades['PnL'] <= 0]['Return'].values
+                
+                metrics['avg_win'] = np.mean(winning_pnl) if len(winning_pnl) > 0 else 0
+                metrics['avg_loss'] = np.mean(losing_pnl) if len(losing_pnl) > 0 else 0
+                
+                total_wins = np.sum(winning_pnl) if len(winning_pnl) > 0 else 0
+                total_losses = abs(np.sum(losing_pnl)) if len(losing_pnl) > 0 else 0
+                metrics['profit_factor'] = total_wins / total_losses if total_losses != 0 else 0
+            except KeyError as e:
+                # 如果列不存在，打印可用列帮助调试
+                print(f"\n❌ 错误: 找不到必需的列 {e}")
+                print(f"可用的列: {trades.columns.tolist()}")
+                print(f"前几条记录:\n{trades.head()}\n")
+                raise  # 重新抛出异常，让用户看到问题
             
-            winning_pnl = trades[trades['PnL'] > 0]['Return'].values
-            losing_pnl = trades[trades['PnL'] <= 0]['Return'].values
+            # 计算交易持续时间（根据 vectorbt 文档使用 Entry/Exit Timestamp）
+            try:
+                if 'Exit Timestamp' in trades.columns and 'Entry Timestamp' in trades.columns:
+                    metrics['avg_trade_duration'] = (
+                        pd.to_datetime(trades['Exit Timestamp']) - 
+                        pd.to_datetime(trades['Entry Timestamp'])
+                    ).mean()
+                else:
+                    print(f"Warning: 找不到时间戳列。可用列: {trades.columns.tolist()}")
+                    metrics['avg_trade_duration'] = pd.Timedelta(0)
+            except Exception as e:
+                print(f"Warning: 无法计算交易持续时间: {e}")
+                metrics['avg_trade_duration'] = pd.Timedelta(0)
             
-            metrics['avg_win'] = np.mean(winning_pnl) if len(winning_pnl) > 0 else 0
-            metrics['avg_loss'] = np.mean(losing_pnl) if len(losing_pnl) > 0 else 0
-            
-            total_wins = np.sum(winning_pnl) if len(winning_pnl) > 0 else 0
-            total_losses = abs(np.sum(losing_pnl)) if len(losing_pnl) > 0 else 0
-            metrics['profit_factor'] = total_wins / total_losses if total_losses != 0 else 0
-            
-            metrics['avg_trade_duration'] = trades['Duration'].mean()
             metrics['max_consecutive_wins'] = self.calculate_max_consecutive_wins(trades)
             metrics['max_consecutive_losses'] = self.calculate_max_consecutive_losses(trades)
         else:
@@ -79,14 +112,27 @@ class PerformanceMetrics:
             metrics['max_consecutive_losses'] = 0
         
         # 其他指标
-        metrics['total_fees'] = self.portfolio.trades.records['Fees'].sum() if len(trades) > 0 else 0
+        # 计算总手续费（Entry Fees + Exit Fees）
+        try:
+            if len(trades) > 0:
+                total_fees = 0
+                if 'Entry Fees' in trades.columns:
+                    total_fees += trades['Entry Fees'].sum()
+                if 'Exit Fees' in trades.columns:
+                    total_fees += trades['Exit Fees'].sum()
+                metrics['total_fees'] = total_fees
+            else:
+                metrics['total_fees'] = 0
+        except Exception as e:
+            print(f"Warning: Could not calculate total_fees: {e}")
+            metrics['total_fees'] = 0
         
         return metrics
     
     def calculate_annual_return(self) -> float:
         """计算年化收益率"""
         try:
-            total_return = self.portfolio.total_return
+            total_return = self.portfolio.total_return()
             n_days = (self.df['timestamp'].iloc[-1] - self.df['timestamp'].iloc[0]).days
             n_years = n_days / 365.25
             if n_years > 0:
@@ -102,7 +148,7 @@ class PerformanceMetrics:
         只考虑下行波动率
         """
         try:
-            returns = self.portfolio.returns
+            returns = self.portfolio.returns()
             excess_returns = returns - risk_free_rate / 252  # 假设252个交易日
             downside_returns = excess_returns[excess_returns < 0]
             
@@ -118,7 +164,7 @@ class PerformanceMetrics:
     def calculate_volatility(self) -> float:
         """计算年化波动率"""
         try:
-            returns = self.portfolio.returns
+            returns = self.portfolio.returns()
             volatility = returns.std() * np.sqrt(252)  # 年化
             return volatility
         except:
@@ -131,7 +177,7 @@ class PerformanceMetrics:
         """
         try:
             annual_return = self.calculate_annual_return()
-            max_dd = abs(self.portfolio.max_drawdown)
+            max_dd = abs(self.portfolio.max_drawdown())
             if max_dd != 0:
                 return annual_return / max_dd
             return 0

@@ -115,7 +115,7 @@ class DataProcessor:
         df = df.sort_values('timestamp').reset_index(drop=True)
         
         # 填充缺失值（向前填充）
-        df = df.fillna(method='ffill')
+        df = df.ffill()
         
         # 删除仍然存在的缺失值
         df = df.dropna()

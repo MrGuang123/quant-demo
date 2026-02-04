@@ -17,7 +17,8 @@ for dir_path in [DATA_DIR, RESULTS_DIR, LOGS_DIR]:
 # ==================== 交易所配置 ====================
 # DEFAULT_EXCHANGE = "binance"
 DEFAULT_EXCHANGE = "coinbase"
-DEFAULT_SYMBOL = "BTC/USDT"
+# DEFAULT_SYMBOL = "BTC/USDT"
+DEFAULT_SYMBOL = "BTC-USD"
 DEFAULT_TIMEFRAME = "1h"
 
 # 支持的交易所

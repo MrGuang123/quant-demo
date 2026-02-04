@@ -12,6 +12,7 @@ from strategies.rsi_strategy import RSIStrategy
 from strategies.macd_strategy import MACDStrategy
 from backtest.engine import BacktestEngine
 from utils.visualization import Visualizer
+import config
 
 
 def main():
@@ -22,10 +23,10 @@ def main():
     
     # ==================== 1. 获取数据 ====================
     print("\n📊 步骤1: 获取数据...")
-    fetcher = DataFetcher("binance")
+    fetcher = DataFetcher(config.DEFAULT_EXCHANGE)
     df = fetcher.fetch_ohlcv(
-        symbol="BTC/USDT",
-        timeframe="1h",
+        symbol=f"{config.DEFAULT_SYMBOL}",
+        timeframe=config.DEFAULT_TIMEFRAME,
         limit=1000
     )
     
